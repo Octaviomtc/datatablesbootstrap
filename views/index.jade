@@ -1,0 +1,85 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+
+  hr
+  button(id="button" class="btn btn-default") getSelectedRow
+  
+  table#table3(data-pagination="true", data-query-params="queryParams")
+    thead
+      tr
+        th(data-field="name") name
+        th(data-field="mail") mail
+        th(data-field="profile") profile
+  
+  
+  .modal.fade(id="modal" tabindex="-1" role="dialog")
+    .modal-dialog
+      .modal-content
+        .modal-body
+          #info
+        
+        
+      
+  script(src="/jquery/dist/jquery.min.js")
+  script(src="/bootstrap/dist/js/bootstrap.min.js")
+  script(src='/bootstrap-table/dist/bootstrap-table.min.js')
+  script(src='/bootstrap-table/dist/locale/bootstrap-table-es-MX.min.js')
+  script.
+    var obj = [];
+  each dato in data
+    script.
+      obj.push({'name': '!{dato.name}','mail': '!{dato.mail}','profile': '!{dato.profile}'});
+      
+  script.
+      var $table = $("#table3");
+      
+      function openModal(info){
+        $('#info').text("");
+        $('#info').text(info);
+        $('#modal').modal('show')
+      }
+      
+      $(function () {
+        	$table.on('click-row.bs.table', function (e, row, $element) {
+          		$('.success').removeClass('success');
+          		$($element).addClass('success');
+              openModal(JSON.stringify(getSelectedRow()));
+        	});
+          $('#button').click(function () {
+          		alert('Selected name: ' + JSON.stringify(getSelectedRow()));
+          });
+      });
+      
+      function getSelectedRow() {
+          var index = $table.find('tr.success').data('index');
+          return $table.bootstrapTable('getData')[index];
+      }
+      
+      
+          
+      $(function () {
+          $('#table3').bootstrapTable({
+              data: obj
+          });
+      });
+      
+      function queryParams() {
+          return {
+              type: 'owner',
+              sort: 'updated',
+              direction: 'desc',
+              per_page: 10,
+              page: 1
+          };
+      }
+                
+      
+      
+      
+      
+      
+  
